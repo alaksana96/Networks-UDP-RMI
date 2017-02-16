@@ -33,8 +33,8 @@ public class UDPServer {
 			recvSoc.receive(pac);
 		}
 		catch(IOException e){}
-		String tmp1 = new String(pac.getData(), 0, pac.getLength());
-		pacSize = Integer.parseInt(tmp1);
+		//String tmp1 = new String(pac.getData(), 0, pac.getLength());
+		pacSize = 5000;
 		pacData = new byte[pacSize];
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
@@ -49,7 +49,6 @@ public class UDPServer {
 			try{
 				recvSoc.receive(pac);
 				String tmp = new String(pac.getData(), 0, pac.getLength());
-				System.out.println("Message: " + (i+1) + ": " + tmp + " has been recieved.");
 				countOfRecieved++;
 			}
 			catch(IOException e){
