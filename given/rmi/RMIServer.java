@@ -54,10 +54,11 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 			if (count == 0) {
 				lostmes = lostmes + "None";
 			}
-			System.out.println("Messages sent      : " + totalMessages);
-			System.out.println("Messages received  : " + (totalMessages - count));
-			System.out.println("Messages lost      : " + count);
+			System.out.println("Messages sent: " + totalMessages);
+			System.out.println("Messages received: " + (totalMessages - count));
+			System.out.println("Messages lost: " + count);
 			System.out.println(lostmes);
+			
 			}
 
 
