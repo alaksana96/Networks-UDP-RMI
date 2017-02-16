@@ -26,16 +26,16 @@ public class UDPServer {
 
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
-		byte[] buf = new byte[1024];
+		byte[] buf = new byte[3000];
 
-		pac = new DatagramPacket(buf, buf.length);		
+		pac = new DatagramPacket(buf, buf.length);
 		try{
 			recvSoc.receive(pac);
 		}
 		catch(IOException e){}
 		String tmp1 = new String(pac.getData(), 0, pac.getLength());
 		pacSize = Integer.parseInt(tmp1);
-		pacData = new byte[pacSize];	
+		pacData = new byte[pacSize];
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		try{

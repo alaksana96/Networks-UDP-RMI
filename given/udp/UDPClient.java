@@ -24,7 +24,7 @@ public class UDPClient {
 
 		// Get the parameters
 		if (args.length < 3) {
-			System.err.println("Arguments required: server name/IP, recv port, message count");
+			System.err.println("Arguments required: server name/IP, recv port, message count, message content");
 			System.exit(-1);
 		}
 
@@ -34,8 +34,8 @@ public class UDPClient {
 			System.out.println("Bad server address in UDPClient, " + args[0] + " caused an unknown host exception " + e);
 			System.exit(-1);
 		}
-		recvPort = Integer.parseInt(args[1]);
-		countTo = Integer.parseInt(args[2]);
+		recvPort = Integer.parseInt(args[1].trim());
+		countTo = Integer.parseInt(args[2].trim());
 		message = new String(args[3]);
 
 		// TO-DO: Construct UDP client class and try to send messages
