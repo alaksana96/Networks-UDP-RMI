@@ -26,7 +26,7 @@ public class UDPServer {
 
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
-		byte[] buf = new byte[1024];
+		byte[] buf = new byte[3000];
 
 		pac = new DatagramPacket(buf, buf.length);
 		try{
@@ -85,7 +85,7 @@ public class UDPServer {
 			System.err.println("Arguments required: recv port");
 			System.exit(-1);
 		}
-		recvPort = Integer.parseInt(args[0]);
+		recvPort = Integer.parseInt(args[0].trim());
 
 		// TO-DO: Construct Server object and start it by calling run().
 		UDPServer myServer = new UDPServer(recvPort);
