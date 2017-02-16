@@ -6,6 +6,7 @@ package rmi;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
@@ -68,16 +69,11 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 	protected static void rebindServer(String serverURL, RMIServer server) {
 		try{
 			LocateRegistry.createRegistry(5099);
-
-			Naming.rebind(serverURL, server);
+			Naming.bind(serverURL, server);
 		}
-		catch (RemoteException re){
-			System.out.println("RemoteException: " + re.getMessage()); 
+		catch (Exception re){
+			System.out.println("Exception: " + re.getMessage()); 
             re.printStackTrace(); 
-		}
-		catch (MalformedURLException mf){
-			System.out.println("MalformedURLException: " + mf.getMessage()); 
-            mf.printStackTrace(); 			
 		}
 	}
 }

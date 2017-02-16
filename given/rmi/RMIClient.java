@@ -36,7 +36,8 @@ public class RMIClient {
 
 		try {
 			// TO-DO: Bind to RMIServer
-			iRMIServer = (RMIServerI) Naming.lookup(urlServer);
+			Registry reg = LocateRegistry.getRegistry(args[0]);
+			iRMIServer = (RMIServerI) reg.lookup("RMIServer");
 			// TO-DO: Attempt to send messages the specified number of times
 			iRMIServer.receiveMessage(msg);
 		}
