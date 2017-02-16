@@ -34,16 +34,22 @@ public class UDPServer {
 		}
 		catch(IOException e){}
 		String tmp1 = new String(pac.getData(), 0, pac.getLength());
+		
 		pacSize = Integer.parseInt(tmp1.trim());
+		
 		pacData = new byte[pacSize];
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		try{
 			recvSoc.setSoTimeout(100);
+
 		}
-		catch(SocketException l){}
+		catch(SocketException l){
+
+		}
 		int TotalMessages = -1;
 		int countOfRecieved = 0;
+
 
 		while(TotalMessages < pacSize - 1){
 			pac = new DatagramPacket(pacData, pacSize);
@@ -85,7 +91,7 @@ public class UDPServer {
 			System.err.println("Arguments required: recv port");
 			System.exit(-1);
 		}
-		recvPort = Integer.parseInt(args[0].trim());
+		recvPort = Integer.parseInt(args[0]);
 
 		// TO-DO: Construct Server object and start it by calling run().
 		UDPServer myServer = new UDPServer(recvPort);
