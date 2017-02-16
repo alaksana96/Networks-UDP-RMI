@@ -83,7 +83,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 			rmis = new RMIServer();
 			//RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(rmis, 0);
 			
-			rebindServer(RMIServer, rmis);
+			rebindServer("RMIServer", rmis);
 
 			System.out.println("Server Ready");
 		}
