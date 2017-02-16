@@ -8,6 +8,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.RMISecurityManager; 
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
 import common.MessageInfo;
 
 public class RMIClient {
@@ -32,7 +35,8 @@ public class RMIClient {
 
 		try{	// TO-DO: Bind to RMIServer
 			
-			iRMIServer = (RMIServerI) Naming.lookup(urlServer);
+			Registry reg = LocateRegistry.getRegistry(args[0]);
+			iRMIServer = (RMIServerI) reg.lookup("RMIServer");
 			// TO-DO: Attempt to send messages the specified number of times
 			iRMIServer.receiveMessage(msg);
 		}

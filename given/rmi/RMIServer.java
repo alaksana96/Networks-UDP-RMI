@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 
+import java.rmi.registry.Registry;
+
 import common.*;
 
 public class RMIServer extends UnicastRemoteObject implements RMIServerI {
@@ -49,9 +51,14 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		if (System.getSecurityManager() == null) {
       		System.setSecurityManager(new SecurityManager());
 		}
+
 		try{
 			rmis = new RMIServer();
-			Naming.rebind("RMIServer", rmis);	
+			//RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(rmis, 0);
+			Registry reg = LocateRegistry.getRegistry();
+			reg.bind("RMIServer", rmis);
+
+			System.out.println("Server Ready");
 		}
 		catch(Exception e){
             System.out.println("RMIServer err: " + e.getMessage()); 
