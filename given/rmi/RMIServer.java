@@ -17,42 +17,67 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 	private int totalMessages = -1;
 	private int[] receivedMessages;
 
-	public RMIServer() throws RemoteException {
+	public RMIServer() throws RemoteException { //Constructor of the remote object
 	}
 
 	public void receiveMessage(MessageInfo msg) throws RemoteException {
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
-
+		if(msg.messageNum == 1){
+			receivedMessages = new int[msg.totalMessages];
+		}
 		// TO-DO: Log receipt of the message
-
+		for(int i = 0; i < msg.totalMessages; i++){
+			System.out.println(msg.toString());
+			msg.messageNum++;
+		}
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
+		
 
 	}
 
 
 	public static void main(String[] args) {
+		try {
+			
+			RMIServer rmis = null;
+		
+			// TO-DO: Initialise Security Manager
+			if (System.getSecurityManager() == null) {
+      			System.setSecurityManager(new SecurityManager());
+			}	
 
-		RMIServer rmis = null;
+			String urlServer = "RMIServer";
 
-		// TO-DO: Initialise Security Manager
-
-		// TO-DO: Instantiate the server class
-
-		// TO-DO: Bind to RMI registry
+			// TO-DO: Instantiate the server class
+			rmis = new RMIServer();
+		
+			// TO-DO: Bind to RMI registry
+			rebindServer(urlServer, rmis);
+			System.out.println("Server Ready");
+			
+		}
+		catch (Exception e) {
+		    System.out.println("RMIServer err: " + e.getMessage()); 
+            e.printStackTrace(); 
+		}
 
 	}
 
 	protected static void rebindServer(String serverURL, RMIServer server) {
+		try{
+			LocateRegistry.createRegistry(5099);
 
-		// TO-DO:
-		// Start / find the registry (hint use LocateRegistry.createRegistry(...)
-		// If we *know* the registry is running we could skip this (eg run rmiregistry in the start script)
-
-		// TO-DO:
-		// Now rebind the server to the registry (rebind replaces any existing servers bound to the serverURL)
-		// Note - Registry.rebind (as returned by createRegistry / getRegistry) does something similar but
-		// expects different things from the URL field.
+			Naming.rebind(serverURL, server);
+		}
+		catch (RemoteException re){
+			System.out.println("RemoteException: " + re.getMessage()); 
+            re.printStackTrace(); 
+		}
+		catch (MalformedURLException mf){
+			System.out.println("MalformedURLException: " + mf.getMessage()); 
+            mf.printStackTrace(); 			
+		}
 	}
 }

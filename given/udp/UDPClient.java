@@ -36,11 +36,12 @@ public class UDPClient {
 		}
 		recvPort = Integer.parseInt(args[1]);
 		countTo = Integer.parseInt(args[2]);
+		message = new String(args[3]);
 
 		// TO-DO: Construct UDP client class and try to send messages
 		UDPClient aClient = new UDPClient();
-		aClient.send(args[2], serverAddr, recvPort);
-		aClient.testLoop(serverAddr, recvPort, countTo);
+		aClient.send(Integer.toString(countTo), serverAddr, recvPort);
+		aClient.testLoop(message, serverAddr, recvPort, countTo);
 	}
 
 	public UDPClient() {
@@ -53,11 +54,11 @@ public class UDPClient {
 		}
 	}
 
-	private void testLoop(InetAddress serverAddr, int recvPort, int countTo) {
+	private void testLoop(String n, InetAddress serverAddr, int recvPort, int countTo) {
 		int				tries = 0;
 		// TO-DO: Send the messages to the server
 		for(tries = 0; tries < countTo; tries++){
-			send("Big Booty Bitches: " + tries, serverAddr, recvPort);
+			send(n, serverAddr,recvPort);
 		}
 
 	}
