@@ -32,13 +32,32 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		//        any missing messages
 
 		if(msg.messageNum == 1){
+			totalMessages = msg.totalMessages;
 			receivedMessages = new int[msg.totalMessages];
 		}
 		// TO-DO: Log receipt of the message
-		for(int i = 0; i < msg.totalMessages; i++){
-			System.out.println(msg.toString());
-			msg.messageNum++;
+		receivedMessages[msg.messageNum] = 1;
+
+		String lostmes = "Lost message numbers: ";
+			int count = 0;
+		if(msg.messageNum + 1 == totalMessages){
+
+			for(int i = 0; i < totalMessages; i++){
+				if(receivedMessages[i] != 1){
+					count++;
+					lostmes = lostmes + " " + (i+1) + ", ";
+				}
+			}
 		}
+
+		if(count == 0){
+			lostmes = "No messages lost";
+		}
+
+		System.out.println("Total messages sent: " + totalMessages);
+		System.out.println("Total messages recieved: " + (totalMessages - count));
+		System.out.println("Total messages lost: " + count);
+		System.out.println(lostmes);
 
 	}
 
@@ -55,14 +74,14 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		try{
 			rmis = new RMIServer();
 			//RMIServerI stub = (RMIServerI) UnicastRemoteObject.exportObject(rmis, 0);
-			Registry reg = LocateRegistry.getRegistry();
-			reg.bind("RMIServer", rmis);
+			LocateRegistry.createRegistry(8080);
+			Naming.rebind("RMIServer", rmis);
 
 			System.out.println("Server Ready");
 		}
 		catch(Exception e){
-            System.out.println("RMIServer err: " + e.getMessage()); 
-            e.printStackTrace(); 			
+            System.out.println("RMIServer err: " + e.getMessage());
+            e.printStackTrace();
 		}
 
 		// TO-DO: Instantiate the server class
@@ -83,4 +102,3 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		// expects different things from the URL field.
 	}
 }
-
