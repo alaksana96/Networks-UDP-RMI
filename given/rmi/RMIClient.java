@@ -36,12 +36,12 @@ public class RMIClient {
 		try{	// TO-DO: Bind to RMIServer
 
 			//Registry reg = LocateRegistry.getRegistry(args[0]);
-			iRMIServer = (RMIServerI) Naming.lookup(args[0]);
-			// TO-DO: Attempt to send messages the specified number of times
+			iRMIServer = (RMIServerI) Naming.lookup(urlServer);
+			// Attempt to send messages the specified number of times
 			for(int i = 0; i < numMessages; i++) {
 			 MessageInfo msg = new MessageInfo(numMessages,i);
 			 iRMIServer.receiveMessage(msg);
-		 }
+}
 		}
 		catch(Exception e){
 			System.out.println("err: " + e.getMessage());

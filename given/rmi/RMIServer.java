@@ -31,38 +31,45 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
 
-		if(msg.messageNum == 1){
+		if(receivedMessages == null){
 			totalMessages = msg.totalMessages;
 			receivedMessages = new int[msg.totalMessages];
 		}
 		// TO-DO: Log receipt of the message
 		receivedMessages[msg.messageNum] = 1;
 
-		String lostmes = "Lost message numbers: ";
-			int count = 0;
-		if(msg.messageNum + 1 == totalMessages){
 
-			for(int i = 0; i < totalMessages; i++){
-				if(receivedMessages[i] != 1){
+		if (msg.messageNum + 1 == totalMessages) {
+			System.out.println("Messages being totaled....");
+
+			String lostmes = "Lost messages: ";
+			int count = 0;
+			for (int i = 0; i < totalMessages; i++) {
+				if (receivedMessages[i] != 1) {
 					count++;
 					lostmes = lostmes + " " + (i+1) + ", ";
 				}
 			}
-		}
 
-		if(count == 0){
-			lostmes = "No messages lost";
-		}
+			if (count == 0) {
+				lostmes = lostmes + "None";
+			}
+			System.out.println("Messages sent      : " + totalMessages);
+			System.out.println("Messages received  : " + (totalMessages - count));
+			System.out.println("Messages lost      : " + count);
+			System.out.println(lostmes);
+			}
 
-		System.out.println("Total messages sent: " + totalMessages);
-		System.out.println("Total messages recieved: " + (totalMessages - count));
-		System.out.println("Total messages lost: " + count);
-		System.out.println(lostmes);
+
+
+
 
 	}
 
 
 	public static void main(String[] args) {
+
+		System.setProperty("RMIServer","146.169.26.11");
 
 		RMIServer rmis = null;
 
