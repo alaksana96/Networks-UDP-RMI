@@ -1,7 +1,8 @@
+
 /*
  * Created on 01-Mar-2016
  */
-package udp;
+//package udp;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -10,72 +11,64 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 
-import common.MessageInfo;
+//import common.MessageInfo;
 
 public class UDPServer {
 
 	private DatagramSocket recvSoc;
-	private int totalMessages = -1;
-	private int[] receivedMessages;
-	private boolean close;
+	//private int totalMessages = -1;
+	//private int[] receivedMessages;
+	//private boolean close;
 
 	private void run() {
-		int				pacSize;
-		byte[]			pacData;
+		int			pacSize;
+		byte[]		pacData;
 		DatagramPacket 	pac;
-		DatagramPacket  mes;
+		DatagramPacket mes;
 
+		byte[] numberOfMessages = new byte[1024]; 
+		try{
+			mes = new DatagramPacket(numberOfMessages, numberOfMessages.length); 
+			recvSoc.receive(mes); 
+			String number_of_messages = new String(mes.getData(),0,mes.getLength()); 
+			pacSize = Integer.parseInt(number_of_messages); //buffer size for the message
+			pacData = new byte [pacSize]; //buffer for the message
+			int i = -1; //counter of total messages
+			int j = 0; //counter of messages received
+			recvSoc.setSoTimeout(100); //set timeout
+			while(i < pacSize - 1){
+				pac = new DatagramPacket(pacData, pacSize); //message packet
+				i++;
+				try{
+					recvSoc.receive(pac); //receive the actual message
+					String str = new String(pac.getData(),0,pac.getLength()); 
+					System.out.println("Message" + (i + 1) + ": " + str + " have been received!");
+					j++;
+				}catch(SocketTimeoutException e){
+					System.out.println("Message" + (i + 1) + ": Timeout");
+				}
+			}
+			
+			if(j == pacSize){
+				System.out.println("All messages have been received!!");
+			}else{
+				//i++;
+				pacSize = pacSize - j;
+				System.out.println("Number of messages received: " + j + "\nNumber of messages lost: " + pacSize);
+			}
+		}
+		 catch (SocketException e1) {
+		        // TODO Auto-generated catch block
+		        //e1.printStackTrace();
+		        System.out.println("Socket closed " + e1);
+
+	    } catch (IOException e) {
+		        // TODO Auto-generated catch block
+		        e.printStackTrace();
+	    }
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
-		byte[] buf = new byte[1024];
 
-		mes = new DatagramPacket(buf, buf.length);
-		try{
-			recvSoc.receive(mes);
-		}
-		catch(IOException e){}
-		String noofmessages = new String(mes.getData(), 0, mes.getLength());
-		
-		pacSize = Integer.parseInt(noofmessages);
-		
-		pacData = new byte[pacSize];
-
-		// TO-DO: On receipt of first message, initialise the receive buffer
-		try{
-			recvSoc.setSoTimeout(30);
-
-		}
-		catch(SocketException l){
-
-		}
-		int TotalMessages = -1;
-		int countOfRecieved = 0;
-
-
-		while(TotalMessages < pacSize - 1){
-			pac = new DatagramPacket(pacData, pacSize);
-			TotalMessages++;
-			try{
-				recvSoc.receive(pac);
-				String str1 = new String(pac.getData(), 0, pac.getLength());
-				System.out.println("Message" + (TotalMessages+1) + ": " + str1);
-				countOfRecieved++;
-			}
-			catch(SocketTimeoutException e){ 
-			System.out.println("Message" + (TotalMessages + 1) + ": Timeout");
-			}
-			catch(IOException e){
-				System.out.println(e.getMessage());
-			}
-		}
-
-		if(countOfRecieved == pacSize){
-			System.out.println("All messages recieved");
-		}
-		else{
-			int tmp2 = pacSize-countOfRecieved;
-			System.out.println("Number of messages recieved: " + countOfRecieved + ", Number of messages lost: " + tmp2);
-		}
 	}
 
 	public UDPServer(int rp) {
@@ -84,7 +77,6 @@ public class UDPServer {
 			recvSoc = new DatagramSocket(rp);
 		}
 		catch(SocketException e){}
-
 		// Done Initialisation
 		System.out.println("UDPServer ready");
 	}
@@ -100,8 +92,10 @@ public class UDPServer {
 		recvPort = Integer.parseInt(args[0]);
 
 		// TO-DO: Construct Server object and start it by calling run().
-		UDPServer myServer = new UDPServer(recvPort);
-		myServer.run();
+		UDPServer udpserver = new UDPServer(recvPort);
+		udpserver.run();
+
+		
 	}
 
 }
