@@ -91,7 +91,7 @@ public class UDPServer {
 			} 
 			
 			System.out.println("Total Messages:" + msg.totalMessages + ", Recieved:" + (msg.totalMessages - count));
-			System.out.println(count + " failed...");
+			System.out.println(count + " failed");
 			System.out.println(lostmes);
 		}
 		

@@ -1,7 +1,6 @@
 package udp;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
@@ -9,6 +8,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 
 import common.MessageInfo;
 
@@ -39,7 +40,6 @@ public class UDPClient {
 
 
 		// TO-DO: Construct UDP client class and try to send messages
-		System.out.println("Constructing udp client");
 		UDPClient client = new UDPClient();
 		System.out.println("Sending messages");
 		client.testLoop(serverAddr, recvPort, countTo);
@@ -71,7 +71,7 @@ public class UDPClient {
 				os.writeObject(m);
 				os.flush();
 			} catch (IOException e) {
-				System.out.println("Error serializing object for transmition.");
+				System.out.println("Error serializing object");
 				System.exit(-1);
 			}
 			
@@ -91,7 +91,7 @@ public class UDPClient {
 		try {
 			sendSoc.send(pkt);
 		} catch (IOException e) {
-			System.out.println("Error transmitting packet over network.");
+			System.out.println("Err transmitting packet");
 			System.exit(-1);
 		}
 	}
