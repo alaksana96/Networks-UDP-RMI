@@ -1,84 +1,115 @@
+package udp;
 
-/*
- * Created on 01-Mar-2016
- */
-//package udp;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Arrays;
+import java.io.*;
+import common.MessageInfo;
 
-//import common.MessageInfo;
 
 public class UDPServer {
 
-	private DatagramSocket recvSoc;
-	//private int totalMessages = -1;
-	//private int[] receivedMessages;
-	//private boolean close;
+	private DatagramSocket socket;
+	private int port;
+	private int totalMessages = -1;
+	private int[] receivedMessages;
+	private boolean close;
 
-	private void run() {
-		int			pacSize;
-		byte[]		pacData;
-		DatagramPacket 	pac;
-		DatagramPacket mes;
+	private void run() throws SocketTimeoutException {
+		int				pacSize;
+		byte[]			pacData;
+		DatagramPacket 	packet;
 
-		byte[] numberOfMessages = new byte[1024]; 
-		try{
-			mes = new DatagramPacket(numberOfMessages, numberOfMessages.length); 
-			recvSoc.receive(mes); 
-			String number_of_messages = new String(mes.getData(),0,mes.getLength()); 
-			pacSize = Integer.parseInt(number_of_messages); //buffer size for the message
-			pacData = new byte [pacSize]; //buffer for the message
-			int i = -1; //counter of total messages
-			int j = 0; //counter of messages received
-			recvSoc.setSoTimeout(100); //set timeout
-			while(i < pacSize - 1){
-				pac = new DatagramPacket(pacData, pacSize); //message packet
-				i++;
-				try{
-					recvSoc.receive(pac); //receive the actual message
-					String str = new String(pac.getData(),0,pac.getLength()); 
-					System.out.println("Message" + (i + 1) + ": " + str + " have been received!");
-					j++;
-				}catch(SocketTimeoutException e){
-					System.out.println("Message" + (i + 1) + ": Timeout");
+		System.out.println("Server Ready");
+		
+		while(!close){
+
+		    //Receive request from client
+			pacSize = 5000;
+			pacData = new byte[5000];
+								  
+			packet = new DatagramPacket(pacData, pacSize);
+			try {
+			  socket.setSoTimeout(10000);
+			  socket.receive(packet);
+			} catch (IOException e) {
+				System.out.println("Error IO exception receiving packet.");
+				System.exit(-1);
+			}
+			
+			processMessage(packet.getData());
+			
+		}
+		
+	}
+
+	public void processMessage(byte[] data) {
+
+		MessageInfo msg = null;
+
+		// Use the data to construct a new MessageInfo object
+	    ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+	    ObjectInputStream is;
+	    
+		try {
+			is = new ObjectInputStream(new BufferedInputStream(byteStream));
+			msg = (MessageInfo) is.readObject();	
+			is.close();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Could not find class match ");
+		} catch (IOException e) {
+			System.out.println("IOexception: ObjectInputStream.");
+		}
+	    
+		// On receipt of first message, initialize the receive buffer
+		if (receivedMessages == null) {
+			totalMessages = msg.totalMessages;
+			receivedMessages = new int[totalMessages];
+		}
+		
+		// Log receipt of the message
+		receivedMessages[msg.messageNum] = 1;
+		
+		// If this is the last expected message, then identify
+		//        any missing messages
+		if (msg.messageNum + 1 == msg.totalMessages) {
+			close = true;
+			
+			String lostmes = "Lost packet numbers: ";
+			int count = 0;
+			for (int i = 0; i < totalMessages; i++) {
+				if (receivedMessages[i] != 1) {
+					count++;
+					lostmes = lostmes + " " + (i+1) + ", ";
 				}
 			}
 			
-			if(j == pacSize){
-				System.out.println("All messages have been received!!");
-			}else{
-				//i++;
-				pacSize = pacSize - j;
-				System.out.println("Number of messages received: " + j + "\nNumber of messages lost: " + pacSize);
-			}
+			if (count == 0){
+			lostmes = lostmes + "None";	
+			} 
+			
+			System.out.println("Total Messages:" + msg.totalMessages + ", Recieved:" + (msg.totalMessages - count));
+			System.out.println(count + " failed...");
+			System.out.println(lostmes);
 		}
-		 catch (SocketException e1) {
-		        // TODO Auto-generated catch block
-		        //e1.printStackTrace();
-		        System.out.println("Socket closed " + e1);
-
-	    } catch (IOException e) {
-		        // TODO Auto-generated catch block
-		        e.printStackTrace();
-	    }
-		// TO-DO: Receive the messages and process them by calling processMessage(...).
-		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
+		
 
 	}
 
+
 	public UDPServer(int rp) {
-		// TO-DO: Initialise UDP socket for receiving data
-		try{
-			recvSoc = new DatagramSocket(rp);
+		// Initialize UDP socket for receiving data
+		try {
+			port = rp;
+			socket = new DatagramSocket(port);
+		} catch (SocketException e) {
+			System.out.println("Error: Could not create socket on port " + port);
+			System.exit(-1);
 		}
-		catch(SocketException e){}
-		// Done Initialisation
-		System.out.println("UDPServer ready");
+		// Make it so the server can run.
+		close = false;
 	}
 
 	public static void main(String args[]) {
@@ -86,16 +117,16 @@ public class UDPServer {
 
 		// Get the parameters from command line
 		if (args.length < 1) {
-			System.err.println("Arguments required: recv port");
+			System.err.println("Error: Arguments required - recv-port");
 			System.exit(-1);
 		}
 		recvPort = Integer.parseInt(args[0]);
 
-		// TO-DO: Construct Server object and start it by calling run().
-		UDPServer udpserver = new UDPServer(recvPort);
-		udpserver.run();
-
-		
+		// Initialize Server object and start it by calling run()
+		UDPServer udpsrv = new UDPServer(recvPort);
+		try {
+			udpsrv.run();
+		} catch (SocketTimeoutException e) {}
 	}
 
 }
