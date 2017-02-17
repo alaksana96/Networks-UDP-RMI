@@ -70,7 +70,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
 
 	public static void main(String[] args) {
 
-		System.setProperty("RMIServer","146.169.26.11");
+		System.setProperty("RMIServer","129.31.219.40");
 
 		RMIServer rmis = null;
 

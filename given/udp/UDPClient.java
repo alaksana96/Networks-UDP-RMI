@@ -34,13 +34,13 @@ public class UDPClient {
 			System.out.println("Bad server address in UDPClient, " + args[0] + " caused an unknown host exception " + e);
 			System.exit(-1);
 		}
-		recvPort = Integer.parseInt(args[1].trim());
-		countTo = Integer.parseInt(args[2].trim());
+		recvPort = Integer.parseInt(args[1]);
+		countTo = Integer.parseInt(args[2]);
 		message = new String(args[3]);
 
 		// TO-DO: Construct UDP client class and try to send messages
 		UDPClient aClient = new UDPClient();
-		aClient.send(args[2].trim(), serverAddr, recvPort);
+		aClient.send(Integer.toString(countTo), serverAddr, recvPort);
 		aClient.testLoop(message, serverAddr, recvPort, countTo);
 	}
 

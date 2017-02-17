@@ -23,25 +23,26 @@ public class UDPServer {
 		int				pacSize;
 		byte[]			pacData;
 		DatagramPacket 	pac;
+		DatagramPacket  mes;
 
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
-		byte[] buf = new byte[3000];
+		byte[] buf = new byte[1024];
 
-		pac = new DatagramPacket(buf, buf.length);
+		mes = new DatagramPacket(buf, buf.length);
 		try{
-			recvSoc.receive(pac);
+			recvSoc.receive(mes);
 		}
 		catch(IOException e){}
-		String tmp1 = new String(pac.getData(), 0, pac.getLength());
+		String noofmessages = new String(mes.getData(), 0, mes.getLength());
 		
-		pacSize = Integer.parseInt(tmp1.trim());
+		pacSize = Integer.parseInt(noofmessages);
 		
 		pacData = new byte[pacSize];
 
 		// TO-DO: On receipt of first message, initialise the receive buffer
 		try{
-			recvSoc.setSoTimeout(100);
+			recvSoc.setSoTimeout(30);
 
 		}
 		catch(SocketException l){
@@ -60,7 +61,12 @@ public class UDPServer {
 				System.out.println("Message" + (TotalMessages+1) + ": " + str1);
 				countOfRecieved++;
 			}
-			catch(Exception e){ }
+			catch(SocketTimeoutException e){ 
+			System.out.println("Message" + (TotalMessages + 1) + ": Timeout");
+			}
+			catch(IOException e){
+				System.out.println(e.getMessage());
+			}
 		}
 
 		if(countOfRecieved == pacSize){
